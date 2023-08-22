@@ -13,8 +13,8 @@ from transformers import (
 
 import wandb
 from getpass import getpass
-#from peft import LoraConfig, PeftModel
-#from trl import SFTTrainer
+from peft import LoraConfig, PeftModel
+from trl import SFTTrainer
 
 from huggingface_hub import login
 
