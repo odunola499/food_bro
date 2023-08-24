@@ -58,7 +58,7 @@ packing = False
 dataset = load_dataset(dataset_name)
 dataset = dataset['train']
 dataset = dataset.shuffle(seed = 42)
-dataset = dataset.train_test_split(test_size=0.2)
+dataset = dataset.train_test_split(test_size=0.02)
 train_dataset = dataset['train']
 test_dataset = dataset['test']
 
@@ -100,6 +100,7 @@ training_arguments = TrainingArguments(
     output_dir=output_dir,
     num_train_epochs=num_train_epochs,
     per_device_train_batch_size=per_device_train_batch_size,
+    per_device_eval_batch_size = per_device_eval_batch_size
     gradient_accumulation_steps=gradient_accumulation_steps,
     optim=optim,
     save_steps=save_steps,
