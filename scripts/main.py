@@ -37,8 +37,8 @@ output_dir = "./results"
 num_train_epochs = 1
 fp16 = False
 bf16 = False
-per_device_train_batch_size = 32
-per_device_eval_batch_size = 32
+per_device_train_batch_size = 64
+per_device_eval_batch_size = 64
 gradient_accumulation_steps = 2
 gradient_checkpointing = True
 max_grad_norm = 0.3
@@ -58,7 +58,7 @@ packing = False
 dataset = load_dataset(dataset_name)
 dataset = dataset['train']
 dataset = dataset.shuffle(seed = 42)
-dataset = dataset.train_test_split(test_size=0.1)
+dataset = dataset.train_test_split(test_size=0.2)
 train_dataset = dataset['train']
 test_dataset = dataset['test']
 
