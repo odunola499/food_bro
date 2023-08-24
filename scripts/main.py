@@ -79,6 +79,7 @@ model = AutoModelForCausalLM.from_pretrained(
     model_name,
     quantization_config=bnb_config,
     #device_map=device_map
+    #device_map =  {"shared": 0, "encoder": 0, "decoder": 1, "lm_head": 'cpu'}
     device_map = 'auto'
 )
 model.config.use_cache = False
