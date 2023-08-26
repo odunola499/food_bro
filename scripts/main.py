@@ -116,7 +116,7 @@ training_arguments = TrainingArguments(
     lr_scheduler_type=lr_scheduler_type,
     report_to="all",
     evaluation_strategy="steps",
-    eval_steps=20  # Evaluate every 20 steps
+    eval_steps=200  # Evaluate every 20 steps
 )
 
 # Set supervised fine-tuning parameters
