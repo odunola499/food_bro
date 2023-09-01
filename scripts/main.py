@@ -36,7 +36,7 @@ use_nested_quant = False
 output_dir = "./results"
 num_train_epochs = 1
 fp16 = False
-bf16 = True
+bf16 = False
 per_device_train_batch_size = 32
 per_device_eval_batch_size = 32
 gradient_accumulation_steps = 1
@@ -49,7 +49,7 @@ lr_scheduler_type = "constant"
 max_steps = -1
 warmup_ratio = 0.03
 group_by_length = True
-save_steps = 500
+save_steps = 25
 logging_steps = 25
 max_seq_length = None
 packing = False
@@ -58,7 +58,7 @@ packing = False
 dataset = load_dataset(dataset_name)
 dataset = dataset['train']
 dataset = dataset.shuffle(seed = 42)
-dataset = dataset.train_test_split(test_size=0.02)
+dataset = dataset.train_test_split(test_size=0.1)
 train_dataset = dataset['train']
 test_dataset = dataset['test']
 
@@ -79,7 +79,6 @@ model = AutoModelForCausalLM.from_pretrained(
     model_name,
     quantization_config=bnb_config,
     #device_map=device_map
-    #device_map =  {"shared": 0, "encoder": 0, "decoder": 1, "lm_head": 'cpu'}
     device_map = 'auto'
 )
 model.config.use_cache = False
@@ -100,8 +99,8 @@ training_arguments = TrainingArguments(
     output_dir=output_dir,
     num_train_epochs=num_train_epochs,
     per_device_train_batch_size=per_device_train_batch_size,
-    per_device_eval_batch_size = per_device_eval_batch_size,
     gradient_accumulation_steps=gradient_accumulation_steps,
+    per_device_eval_batch_size=
     optim=optim,
     save_steps=save_steps,
     logging_steps=logging_steps,
@@ -116,7 +115,7 @@ training_arguments = TrainingArguments(
     lr_scheduler_type=lr_scheduler_type,
     report_to="all",
     evaluation_strategy="steps",
-    eval_steps=200  # Evaluate every 20 steps
+    eval_steps=20  # Evaluate every 20 steps
 )
 
 # Set supervised fine-tuning parameters
