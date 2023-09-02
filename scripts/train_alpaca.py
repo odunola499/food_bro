@@ -25,7 +25,7 @@ bnb_config = BitsAndBytesConfig(
     bnb_4bit_use_double_quant=True
 )
 
-peft_config = PeftConfig(
+peft_config = LoraConfig(
 r = 16,
 lora_alpha = 32,
 target_modules = ['q_proj', 'k_proj', 'v_proj', 'o_proj'],
@@ -52,7 +52,7 @@ base_model.lm_head = CastOutputToFloat(base_model.lm_head)
 
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-model = get_peft_model(base_model, PeftConfig)
+model = get_peft_model(base_model, peft_config)
 model.print_trainable_parameters()
 
 tokenized_train_dataset = train_dataset.map(lambda examples: tokenizer(examples['text']), batched = True)
