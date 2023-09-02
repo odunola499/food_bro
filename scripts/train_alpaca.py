@@ -9,8 +9,10 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from datasets import load_dataset
 from peft import PeftConfig, get_peft_model
 from torch import nn
-train_dataset = load_dataset('tatsu-lab/alpaca', split = 'train')
-test_dataset = load_dataset('tatsu-lab/alpaca', split = 'test')
+dataset = load_dataset('tatsu-lab/alpaca', split = 'train').train_test_split(test_size =0.1)
+
+train_dataset = dataset['train']
+test_dataset = dataset['test']
 model_id = 'openlm-research/open_llama_7b_v2'
 wandb.login
 optim = 'adamw_torch'
