@@ -14,7 +14,7 @@ dataset = load_dataset('tatsu-lab/alpaca', split = 'train').train_test_split(tes
 train_dataset = dataset['train']
 test_dataset = dataset['test']
 model_id = 'openlm-research/open_llama_7b_v2'
-wandb.login('bceff3fe9a5725b89b5986c88c7d6ba6d8d304a0')
+wandb.login()
 optim = 'adamw_torch'
 model_max_length = 1000
 
