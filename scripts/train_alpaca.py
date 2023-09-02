@@ -34,7 +34,8 @@ task_type = "CAUSAL_LM"
 )
 base_model = AutoModelForCausalLM.from_pretrained(
     model_id,
-    quantization_config = bnb_config
+    quantization_config = bnb_config,
+    device_map = 'auto'
 )
 
 for param in base_model.parameters():
