@@ -15,7 +15,7 @@ train_dataset = dataset['train']
 test_dataset = dataset['test']
 model_id = 'openlm-research/open_llama_7b_v2'
 wandb.login()
-optim = 'adamw_torch'
+optim = "paged_adamw_8bit"
 model_max_length = 1000
 
 bnb_config = BitsAndBytesConfig(
