@@ -23,7 +23,7 @@ login(token=huggingface_access_token)
 wandb_access_token = getpass("enter wandb access token: ")
 wandb.login(key = wandb_access_token)
 
-model_name = "meta-llama/Llama-2-7b-chat-hf"
+model_name = 'openlm-research/open_llama_3b_v2'
 new_model = "llama-2-7b-odunola-foodie"
 dataset_name = "odunola/foodiesdataset"
 lora_r = 64
