@@ -70,8 +70,7 @@ arguments = TrainingArguments(
     eval_steps = 100,
     save_safetensors=True,
     save_steps = 100,
-    max_grad_norm = 0.3,
-    eval_steps = 100
+    max_grad_norm = 0.3
 
 )
 
