@@ -44,7 +44,7 @@ base_model = AutoModelForCausalLM.from_pretrained(
 )
 base_model.config.use_cache = False
 
-
+base_model.config.pretraining_tp = 1
 
 tokenizer = LlamaTokenizer.from_pretrained(model_id)
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
@@ -60,14 +60,19 @@ arguments = TrainingArguments(
     warmup_ratio = 0.03,
     max_steps = 1000,
     learning_rate = 2e-4,
-    fp16 = True,
+    fp16 = False,
+    bf16 = True,
     logging_steps = 50,
     output_dir = 'outputs',
     optim = optim,
     lr_scheduler_type='constant',
     evaluation_strategy='steps',
     eval_steps = 100,
-    save_safetensors=True
+    save_safetensors=True,
+    save_steps = 100,
+    max_grad_norm = 0.3,
+    eval_steps = 100
+
 )
 
 trainer = SFTTrainer(
