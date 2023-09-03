@@ -4,11 +4,9 @@ NOtes to self
 1. remember to not use the fasdt version of AutoTOkenizer
 """
 import torch
-import transformers
 from transformers import AutoModelForCausalLM, LlamaTokenizer, BitsAndBytesConfig, Trainer, TrainingArguments
 from datasets import load_dataset
-from peft import PeftConfig, get_peft_model,LoraConfig
-from torch import nn
+from peft import LoraConfig
 import wandb
 from huggingface_hub import login
 from trl import SFTTrainer
@@ -45,12 +43,6 @@ base_model = AutoModelForCausalLM.from_pretrained(
     device_map = 'auto'
 )
 base_model.config.use_cache = False
-
-for param in base_model.parameters():
-  param.requires_grad = False  # freeze the model - train adapters later
-  if param.ndim == 1:
-    # cast the small parameters (e.g. layernorm) to fp32 for stability
-    param.data = param.data.to(torch.float32)
 
 
 
@@ -91,5 +83,5 @@ trainer = SFTTrainer(
 )
 
 trainer.train()
-trainer.model.save_pretrained()
+trainer.model.save_pretrained('alpaca_peft_model')
 trainer.push_to_hub('done!')

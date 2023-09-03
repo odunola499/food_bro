@@ -23,7 +23,7 @@ login(token=huggingface_access_token)
 wandb_access_token = getpass("enter wandb access token: ")
 wandb.login(key = wandb_access_token)
 
-model_name = 'openlm-research/open_llama_3b_v2'
+model_name = "meta-llama/Llama-2-7b-chat-hf"
 new_model = "llama-2-7b-odunola-foodie"
 dataset_name = "odunola/foodiesdataset"
 lora_r = 64
@@ -100,7 +100,7 @@ training_arguments = TrainingArguments(
     num_train_epochs=num_train_epochs,
     per_device_train_batch_size=per_device_train_batch_size,
     gradient_accumulation_steps=gradient_accumulation_steps,
-    per_device_eval_batch_size=
+    per_device_eval_batch_size= per_device_eval_batch_size,
     optim=optim,
     save_steps=save_steps,
     logging_steps=logging_steps,
