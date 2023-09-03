@@ -34,7 +34,7 @@ task_type = "CAUSAL_LM"
 )
 base_model = AutoModelForCausalLM.from_pretrained(
     model_id,
-    quantization_config = bnb_config,
+    quantization_config = bnb_config, #quantize to 4 bit
     device_map = 'auto'
 )
 
@@ -51,7 +51,7 @@ class CastOutputToFloat(nn.Sequential):
   def forward(self, x): return super().forward(x).to(torch.float32)
 base_model.lm_head = CastOutputToFloat(base_model.lm_head)
 
-tokenizer = AutoTokenizer.from_pretrained(model_id)
+tokenizer = LlamaTokenizer.from_pretrained(model_id)
 tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 model = get_peft_model(base_model, peft_config)
 model.print_trainable_parameters()
