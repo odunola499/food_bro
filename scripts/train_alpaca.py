@@ -5,7 +5,7 @@ NOtes to self
 """
 import torch
 import transformers
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, Trainer, TrainingArguments
+from transformers import AutoModelForCausalLM, LLamaTokenizer, BitsAndBytesConfig, Trainer, TrainingArguments
 from datasets import load_dataset
 from peft import PeftConfig, get_peft_model,LoraConfig
 from torch import nn
