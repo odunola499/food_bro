@@ -29,7 +29,7 @@ peft_config = LoraConfig(
 r = 16,
 lora_alpha = 32,
 target_modules = ['q_proj', 'k_proj', 'v_proj', 'o_proj'],
-bias = None,
+bias = 'none',
 task_type = "CAUSAL_LM"
 )
 base_model = AutoModelForCausalLM.from_pretrained(
