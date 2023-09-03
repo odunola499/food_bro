@@ -13,7 +13,7 @@ dataset = load_dataset('tatsu-lab/alpaca', split = 'train').train_test_split(tes
 
 train_dataset = dataset['train']
 test_dataset = dataset['test']
-model_id = 'openlm-research/open_llama_7b_v2'
+model_id = 'openlm-research/open_llama_3b_v2' #for testing. final model to be trained is a 7b parameter base model
 wandb.login()
 optim = "paged_adamw_8bit"
 model_max_length = 1000
