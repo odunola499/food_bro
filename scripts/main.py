@@ -34,11 +34,11 @@ bnb_4bit_compute_dtype = "float16"
 bnb_4bit_quant_type = "nf4"
 use_nested_quant = False
 output_dir = "./results"
-num_train_epochs = 3
-fp16 = True
+num_train_epochs = 1
+fp16 = False
 bf16 = False
-per_device_train_batch_size = 16
-per_device_eval_batch_size = 16
+per_device_train_batch_size = 32
+per_device_eval_batch_size = 32
 gradient_accumulation_steps = 1
 gradient_checkpointing = True
 max_grad_norm = 0.3
@@ -49,7 +49,7 @@ lr_scheduler_type = "constant"
 max_steps = -1
 warmup_ratio = 0.03
 group_by_length = True
-save_steps = 200
+save_steps = 25
 logging_steps = 25
 max_seq_length = None
 packing = False
@@ -58,12 +58,12 @@ packing = False
 dataset = load_dataset(dataset_name)
 dataset = dataset['train']
 dataset = dataset.shuffle(seed = 42)
-dataset = dataset.train_test_split(test_size=0.2)
+dataset = dataset.train_test_split(test_size=0.1)
 train_dataset = dataset['train']
 test_dataset = dataset['test']
 
-#train_dataset = train_dataset.map(lambda examples: {'text': [prompt + response for prompt, response in zip(examples['prompt'], examples['recipe'])]}, batched=True)
-#test_dataset = test_dataset.map(lambda examples: {'text': [prompt + response for prompt, response in zip(examples['prompt'], examples['recipe'])]}, batched=True)
+train_dataset = train_dataset.map(lambda examples: {'text': [prompt + response for prompt, response in zip(examples['prompt'], examples['recipe'])]}, batched=True)
+test_dataset = test_dataset.map(lambda examples: {'text': [prompt + response for prompt, response in zip(examples['prompt'], examples['recipe'])]}, batched=True)
 
 
 #loading model and lora configs
@@ -84,7 +84,7 @@ model = AutoModelForCausalLM.from_pretrained(
 model.config.use_cache = False
 model.config.pretraining_tp = 1
 tokenizer = LlamaTokenizer.from_pretrained(model_name, trust_remote_code=True)
-tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+tokenizer.pad_token = tokenizer.eos_token
 tokenizer.padding_side = "right"
 peft_config = LoraConfig(
     lora_alpha=lora_alpha,
@@ -116,7 +116,7 @@ training_arguments = TrainingArguments(
     lr_scheduler_type=lr_scheduler_type,
     report_to="all",
     evaluation_strategy="steps",
-    eval_steps=100  # Evaluate every 20 steps
+    eval_steps=20  # Evaluate every 20 steps
 )
 
 # Set supervised fine-tuning parameters
