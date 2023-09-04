@@ -3,7 +3,7 @@ import torch
 from datasets import load_dataset
 from transformers import (
     AutoModelForCausalLM,
-    LlamaTokenizer,
+    AutoTokenizer,
     BitsAndBytesConfig,
     HfArgumentParser,
     TrainingArguments,
@@ -25,7 +25,7 @@ wandb.login(key = 'bceff3fe9a5725b89b5986c88c7d6ba6d8d304a0')
 
 model_name = 'openlm-research/open_llama_3b_v2'
 new_model = "opemlm-odunola-foodie"
-dataset_name = 'tatsu-lab/alpaca'
+dataset_name = "odunola/foodiesdataset"
 lora_r = 64
 lora_alpha = 16
 lora_dropout = 0.1
@@ -83,13 +83,12 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 model.config.use_cache = False
 model.config.pretraining_tp = 1
-tokenizer = LlamaTokenizer.from_pretrained(model_name, trust_remote_code=True)
+tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
 tokenizer.pad_token = tokenizer.eos_token
 tokenizer.padding_side = "right"
 peft_config = LoraConfig(
     lora_alpha=lora_alpha,
     lora_dropout=lora_dropout,
-    target_modules = ['q_proj', 'k_proj', 'v_proj', 'o_proj'],
     r=lora_r,
     bias="none",
     task_type="CAUSAL_LM",
