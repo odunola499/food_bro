@@ -19,9 +19,7 @@ from trl import SFTTrainer
 from huggingface_hub import login
 
 
-login(token = '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')
 
-wandb.login(key = 'bceff3fe9a5725b89b5986c88c7d6ba6d8d304a0')
 
 model_name = 'openlm-research/open_llama_3b_v2'
 new_model = "opemlm-odunola-foodie"
