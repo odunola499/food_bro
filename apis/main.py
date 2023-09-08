@@ -3,7 +3,7 @@ from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     BitsAndBytesConfig)
-
+import torch
 
 model_path ='meta-llama/Llama-2-7b-chat-hf'
 tokenizer_path = 'meta-llama/Llama-2-7b-chat-hf'
