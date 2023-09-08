@@ -1,4 +1,6 @@
 transformers
 bitsandbytes
 fastapi
-"uvicorn[standard]"
+uvicorn[standard]
+scipy
+accelerate
