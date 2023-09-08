@@ -9,7 +9,7 @@ model_path ='meta-llama/Llama-2-7b-chat-hf'
 tokenizer_path = 'meta-llama/Llama-2-7b-chat-hf'
 
 bnb_config = BitsAndBytesConfig(
-    load_in_8bit=True,
+    load_in_4bit=True,
     bnb_4bit_quant_type= 'nf4',
     bnb_4bit_compute_dtype = torch.float16,
     bnb_4bit_use_double_quant=False
@@ -42,6 +42,7 @@ def check_load():
 def predict(text):
     prompt = template.format(question = text)
     tokens = tokenizer(prompt, return_tensors = 'pt')
-    output = model.generate(**tokens, max_length = 500).split('[/INST]')[-1]
-    return output
+    outputs = model.generate(**tokens, max_length = 500)[0]
+    response = tokenizer.decode(outputs, skip_special_tokens=True).split('[/INST]')[-1]
+    return response
 
