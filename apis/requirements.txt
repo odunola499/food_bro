@@ -1,0 +1,4 @@
+transformers
+bitsandbytes
+fastapi
+"uvicorn[standard]"
