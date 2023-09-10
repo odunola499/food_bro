@@ -6,3 +6,5 @@ scipy
 accelerate
 weaviate-client
 sentence-transformers
+loralib
+

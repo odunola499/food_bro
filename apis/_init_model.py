@@ -7,6 +7,13 @@ import weaviate
 from sentence_transformers import SentenceTransformer
 from prompts import SIMPLE_PREDICTION_PROMPT_TEMPLATE, RETRIEVER_PROMPT_TEMPLATE, RETURN_RECIPE_TEMPLATE
 
+import torch
+from peft import PeftModel, PeftConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+
+# Load the Lora model
+
 
 # we could for starters tell the user to b as detailed with their request as they can
 class Models:
@@ -26,11 +33,13 @@ class Models:
                 quantization_config = bnb_config,
                 device_map = 'auto'
             )
-        self.llm_2 = AutoModelForCausalLM.from_pretrained(
-                llm_model_path_2,
-                quantization_config = bnb_config,
-                device_map = 'auto'
-            )
+
+        peft_model_id = "odunola/bloomz_reriever_instruct"
+        config = PeftConfig.from_pretrained(peft_model_id)
+        model = AutoModelForCausalLM.from_pretrained(config.base_model_name_or_path, return_dict=True, load_in_8bit = True, device_map = 'auto')
+        self.tokenizer2 = AutoTokenizer.from_pretrained(config.base_model_name_or_path)
+        self.llm2 = PeftModel.from_pretrained(model, peft_model_id)
+
         self.semantic_model = SentenceTransformer('thenlper/gte-large')
         self.client = weaviate.Client(
                 url="https://testingserver-8otaf3tj.weaviate.network", #for testing
@@ -62,8 +71,8 @@ class Models:
         return response
     def _generate_interpretation(self,text):
             prompt = RETRIEVER_PROMPT_TEMPLATE.format(request = text)
-            tokens = self.tokenizer(prompt, return_tensors = 'pt')
-            outputs =  self.llm_2.generate(tokens, temperature = 0, max_length = 100)
-            response = self.tokenizer.decode(outputs, skip_special_tokens=True).split('[/INST]')[-1]       
+            tokens = self.tokenizer2(prompt, return_tensors = 'pt')
+            outputs =  self.llm2.generate(tokens, temperature = 0, max_length = 100)
+            response = self.tokenizer2.decode(outputs, skip_special_tokens=True).split('Interpretation:')[-1]       
             return response
             
