@@ -45,7 +45,7 @@ class Models:
             )
     def _retrieve_from_db(self, text): #this gets the context from the vector db
         query = f"To generate a representation for this sentence for use in retrieving related articles: {text}"
-        query_vector = self.retriever_model.encode(query)
+        query_vector = self.semantic_model.encode(query)
         response = self.client.query.get(
         "Recipes",
         ["texts"]
