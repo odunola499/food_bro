@@ -19,7 +19,6 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 class Models:
     def __init__(self):
         llm_model_path = 'meta-llama/Llama-2-13b-chat-hf'
-        llm_model_path_2 = 'Open-Orca/LlongOrca-7B-16k'
         bnb_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_dtype= 'nf4',
