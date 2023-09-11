@@ -11,7 +11,7 @@ import torch
 from peft import PeftModel, PeftConfig
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import openai
-from getpass import getpass
+import getpass
 # Load the Lora model
 
 
