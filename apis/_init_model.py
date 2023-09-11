@@ -54,7 +54,8 @@ class Models:
     def _generate_interpretation(self,text):
             prompt = RETRIEVER_PROMPT_TEMPLATE.format(request = text)
             tokens = self.tokenizer2(prompt, return_tensors = 'pt')
-            outputs =  self.llm2.generate(tokens, temperature = 0, max_length = 100)
-            response = self.tokenizer2.decode(outputs, skip_special_tokens=True).split('Interpretation:')[-1]       
+            outputs =  self.llm2.generate(input_ids = tokens['input_ids'].to('cuda'), temperature = 0, max_length = 100)
+            response = self.tokenizer2.decode(outputs[0], skip_special_tokens=True).split('Interpretation:')[-1]       
             return response
             
+
