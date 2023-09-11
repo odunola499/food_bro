@@ -18,7 +18,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 # we could for starters tell the user to b as detailed with their request as they can
 class Models:
     def __init__(self):
-        llm_model_path = 'meta-llama/Llama-2-13b-chat-hf'
+        llm_model_path = 'garage-bAInd/Platypus2-70B-instruct'
         bnb_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_dtype= 'nf4',
@@ -35,7 +35,7 @@ class Models:
 
         peft_model_id = "odunola/bloomz_reriever_instruct"
         config = PeftConfig.from_pretrained(peft_model_id)
-        model = AutoModelForCausalLM.from_pretrained(config.base_model_name_or_path, return_dict=True, load_in_8bit = True, device_map = 'auto')
+        model = AutoModelForCausalLM.from_pretrained(config.base_model_name_or_path, return_dict=True, load_in_8bit = True, device_map = 'auto', quantization_config = bnb_config)
         self.tokenizer2 = AutoTokenizer.from_pretrained(config.base_model_name_or_path)
         self.llm2 = PeftModel.from_pretrained(model, peft_model_id)
 
@@ -49,7 +49,7 @@ class Models:
         response = self.client.query.get(
         "Recipes",
         ["texts"]
-            ).with_limit(3).with_near_vector(
+            ).with_limit(2).with_near_vector(
                 {'vector': query_vector}
             ).do()
         return text, response['data']['Get']['Recipes']
@@ -60,18 +60,18 @@ class Models:
         prompt = RETURN_RECIPE_TEMPLATE.format(context = context, request = text)
         tokens = self.tokenizer(prompt, return_tensors = 'pt')
         outputs = self.llm.generate(**tokens, max_length = 500, temperature = 0.8)[0]
-        response = self.tokenizer.decode(outputs, skip_special_tokens=True).split('[/INST]')[-1]
+        response = self.tokenizer.decode(outputs, skip_special_tokens=True).split('Response')[-1]
         return response
     def predict(self, text):
         prompt = SIMPLE_PREDICTION_PROMPT_TEMPLATE.format(question = text)
         tokens = self.tokenizer(prompt, return_tensors = 'pt')
         outputs = self.llm.generate(**tokens, max_length = 500)[0]
-        response = self.tokenizer.decode(outputs, skip_special_tokens=True).split('[/INST]')[-1]
+        response = self.tokenizer.decode(outputs, skip_special_tokens=True).split('Response]')[-1]
         return response
     def _generate_interpretation(self,text):
             prompt = RETRIEVER_PROMPT_TEMPLATE.format(request = text)
             tokens = self.tokenizer2(prompt, return_tensors = 'pt')
-            outputs =  self.llm2.generate(input_ids = tokens['input_ids'].to('cuda'), attention_mask = tokens['attention_mask'].to('cuda'), temperature = 5, max_length = 200)[0]
+            outputs =  self.llm2.generate(input_ids = tokens['input_ids'].to('cuda'), attention_mask = tokens['attention_mask'].to('cuda'), temperature = 0.1, max_length = 200, do_sample = True)[0]
             response = self.tokenizer2.decode(outputs, skip_special_tokens=True).split('Interpretation:')[-1]       
             return response
             
