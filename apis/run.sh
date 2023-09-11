@@ -4,4 +4,4 @@ pip install -r requirements.txt
 pip install -q git+https://github.com/huggingface/peft.git git+https://github.com/huggingface/transformers.git
 
 uvicorn main:app --reload --host 0.0.0.0 --port 4000
-streamlit run interface.py
+streamlit run --server.address 0.0.0.0 interface.py
