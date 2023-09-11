@@ -35,7 +35,7 @@ class Models:
         response = self.client.query.get(
         "Recipes",
         ["texts"]
-            ).with_limit(2).with_near_vector(
+            ).with_limit(1).with_near_vector(
                 {'vector': query_vector}
             ).do()
         return text, response['data']['Get']['Recipes']
