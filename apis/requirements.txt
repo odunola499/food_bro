@@ -8,4 +8,4 @@ weaviate-client
 sentence-transformers
 loralib
 openai
-getpass
+
