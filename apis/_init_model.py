@@ -23,8 +23,6 @@ class Models:
         rephrase_model = AutoModelForCausalLM.from_pretrained(config.base_model_name_or_path, return_dict=True, load_in_8bit = True, device_map = 'auto')
         self.tokenizer2 = AutoTokenizer.from_pretrained(config.base_model_name_or_path)
         self.llm2 = PeftModel.from_pretrained(rephrase_model, peft_model_id)
-        openai_password = getpass.getpass("Enter your openai api key: ")
-        os.environ['OPENAI_API_KEY'] = openai_password
         self.semantic_model = SentenceTransformer('thenlper/gte-large')
         self.client = weaviate.Client(
                 url="https://testingserver-8otaf3tj.weaviate.network", #for testing

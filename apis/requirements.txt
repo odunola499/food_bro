@@ -2,9 +2,10 @@ transformers
 bitsandbytes
 fastapi
 uvicorn[standard]
-weaviate[client]
+weaviate-client
 sentence-transformers
 peft
 torch
 transformers
 nemoguardrails
+openai
