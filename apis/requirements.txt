@@ -2,10 +2,9 @@ transformers
 bitsandbytes
 fastapi
 uvicorn[standard]
-scipy
-accelerate
-weaviate-client
+weaviate[client]
 sentence-transformers
-loralib
-openai
-streamlit
+peft
+torch
+transformers
+nemoguardrails

@@ -1,11 +1,19 @@
 from fastapi import FastAPI
-
+from prompts import YAML_CONTENT, RAG_COLANG_CONTENT
 from _init_model import Models
-
+from nemoguardrails import LLMRails, RailsConfig
 
 model = Models()
+config = RailsConfig.from_content(
+    colang_content=RAG_COLANG_CONTENT,
+    yaml_content=YAML_CONTENT
+)
+rag_rails = LLMRails(config)
 
-app = FastAPI()
+rag_rails.register_action(action = model.generate_interpretation, name= "generate_interpretation")
+rag_rails.register_action(action = model.retrieve, name = "retrieve")
+rag_rails.register_action(action = model.reply, name = "rag")
+app= FastAPI()
 
 
 @app.get('/')
@@ -18,14 +26,14 @@ def predict(text):
 
 @app.post('/retrievedb')
 def retrieve_from_vector_db(request):
-    return model._retrieve_from_db(request)
+    return model.retrieve(request)
 
-@app.post('/get_recipe')
-def get_recipe(text):
+@app.post('/get_rag_response')
+def get_rag_response(text):
     return model.return_recipe(text)
 
 @app.post('/generate_representation')
 def generate_representation(text):
-    return model._generate_interpretation(text)
+    return model.generate_interpretation(text)
 
 

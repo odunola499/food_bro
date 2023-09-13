@@ -5,8 +5,8 @@ from transformers import (
 import torch
 import weaviate
 from sentence_transformers import SentenceTransformer
-from prompts import SIMPLE_PREDICTION_OPENAI_PROMPT_TEMPLATE, RETRIEVER_PROMPT_TEMPLATE, OPENAI_SYSTEM_PROMPT_TEMPATE, OPENAI_USER_TEMPLATE
-
+from prompts import OPENAI_SYSTEM_PROMPT, OPENAI_USER_TEMPLATE, SIMPLE_PREDICTION_OPENAI_PROMPT_TEMPLATE, RETRIEVER_PROMPT_TEMPLATE
+import os
 import torch
 from peft import PeftModel, PeftConfig
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -24,34 +24,41 @@ class Models:
         self.tokenizer2 = AutoTokenizer.from_pretrained(config.base_model_name_or_path)
         self.llm2 = PeftModel.from_pretrained(rephrase_model, peft_model_id)
         openai_password = getpass.getpass("Enter your openai api key: ")
-        openai.api_key = openai_password
+        os.environ['OPENAI_API_KEY'] = openai_password
         self.semantic_model = SentenceTransformer('thenlper/gte-large')
         self.client = weaviate.Client(
                 url="https://testingserver-8otaf3tj.weaviate.network", #for testing
             )
-    def _retrieve_from_db(self, text): #this gets the context from the vector db
-        query = f"To generate a representation for this sentence for use in retrieving related articles: {text}"
-        query_vector = self.semantic_model.encode(query)
+        
+
+    async def retrieve(self, query: str) -> list:#this gets the context from the vector db
+        prompt = f"To generate a representation for this sentence for use in retrieving related articles: {query}"
+        query_vector = self.semantic_model.encode(prompt)
         response = self.client.query.get(
         "Recipes",
         ["texts"]
             ).with_limit(3).with_near_vector(
                 {'vector': query_vector}
             ).do()
-        return text, response['data']['Get']['Recipes']
+        res = response['data']['Get']['Recipes']
+        return [i['texts'] for i in res]
 
-    def return_recipe(self, text):
-        interpretation = self._generate_interpretation(text)
-        context = self._retrieve_from_db(interpretation)
-        user_prompt = OPENAI_USER_TEMPLATE.format(context = context,request = interpretation)
-        chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[{"role":"system", "content":OPENAI_SYSTEM_PROMPT_TEMPATE},{"role": "user", "content": user_prompt}])
+
+
+    async def reply(self, query:str, contexts: list) -> str:
+        context_str = "\n".join(contexts)
+        user_prompt = OPENAI_USER_TEMPLATE.format(context_str = context_str,query =query)
+        chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[{"role":"system", "content":OPENAI_SYSTEM_PROMPT},{"role": "user", "content": user_prompt}])
         response = chat_completion['choices'][0]['message']['content']
         return response
-    def predict(self, text):
+    
+
+    def predict(self, text: str) -> str:
         chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[{"role":"system", "content":SIMPLE_PREDICTION_OPENAI_PROMPT_TEMPLATE},{"role": "user", "content": text}])
         response = chat_completion['choices'][0]['message']['content']
         return response
-    def _generate_interpretation(self,text):
+    
+    async def generate_interpretation(self,text:str) -> str:
             prompt = RETRIEVER_PROMPT_TEMPLATE.format(request = text)
             tokens = self.tokenizer2(prompt, return_tensors = 'pt')
             outputs =  self.llm2.generate(input_ids = tokens['input_ids'].to('cuda'), temperature = 0.2, max_length = 200, do_sample = True)

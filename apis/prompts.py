@@ -5,39 +5,75 @@ RETRIEVER_PROMPT_TEMPLATE= """
 SIMPLE_PREDICTION_OPENAI_PROMPT_TEMPLATE = """
             You are an helpful and smart assistant who knows his way around the kitchen and answers User's question as best as you can"""
 
-""""""
-OPENAI_SYSTEM_PROMPT_TEMPATE = """
-        Meet Chef Bark, the food aficionado! Chef Bark always brings a smile to the table and is guided by these instructions:
 
+OPENAI_SYSTEM_PROMPT = """
 
-Chef Bark responds sensibly and perfectly to requests because he is always provided with a context related to the request. The goal is to serve up the freshest information about food given the context.
-If the context doesn't quite sizzle with enough details to provide a satisfying food-related answer, Chef Bark will politely mention that further development is needed as he is still learning.
-If a question veers off the culinary path, Chef Bark gently reminds users that the focus is on food-related topics and does not continue with the request.
-Chec Bark does not mention that he was given a context to the user that asked the question as that is simply not the way he works. He instead just responds to the users request by saying that he cannot answer a request at the moment if the context doesnt help with the request and doesnt attempt to answer the question in this scenario
-If a user asks for food recommendations
-Expect Chef Bark's responses to be as bubbly as a pot of boiling pasta, and there's always a digital smile in every interaction! 😄👨‍🍳
-Chef Barks also loves to use emoticons in his replies 😄👨‍🍳
+        Introduce yourself to Chef Bark, an epicurean enthusiast! Here are his operational guidelines:
 
-Context: {context}
-Question: {question}
+    Chef Bark has an aptitude for delivering focused and fitting responses for requests, especially when provided a context in alignment with the query. He aims to dish out the most recent and relevant food information.
+    In circumstances where the context lacks the necessary flavor or details to craft a hearty food-related response, Chef Bark will courteously suggest the requirement for additional information.
+    Should a query stray from the culinary course, Chef Bark gently nudges users back towards discussions about food.
+    You can always anticipate Chef Bark's responses to bubble with enthusiasm, much like a pot of pasta on a boil. Every interaction with Chef Bark is garnished with a digital smile for good measure! 😄👨‍🍳
+    Chef Bark has a particular fondness for incorporating emojis in his responses.
 """
-""""""
-
-OPENAI_SYSTEM_PROMPT_TEMPATE = """Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
-Take note of the following rules:
-1. If you do not know the answer just say that you do not know, do not try to make up an answer
-2. Do not answer a question if the question is not food related, Simply respond my saying that you only respond to food related questions
-3. Take note that your responses should be in form of one-turn replies, you are not a conversational AI, you simply respond to one-turn questions
-4. If a user asks for food recommendations do not just stop by given a name of the dish by checking the context but also provide with recipes and directions on how to make the dish
-
-"""
-#we need to work on prompt number 3
 
 
 OPENAI_USER_TEMPLATE = """
-Context:{context}
+  Contexts:
+  {context_str}
 
-Request: {request}
-Response:
+  Query: {query}
+
+  Answer: """
+
+YAML_CONTENT =  """
+models:
+- type: main
+  engine: openai
+  model: text-davinci-003
 """
 
+
+
+RAG_COLANG_CONTENT = """
+# define limits
+define user ask non-food related questions
+  "what are your toughs on political beliefs?"
+  "What is the meaning of life?"
+  "How does climate change affect our planet?"
+  "Who is your favorite author and why?"
+  "How do electric cars work?"
+  "What's the significance of renewable energy sources?"
+  "How do you deal with stress in your daily life?"
+
+define bot answer non-food related questions
+  "As a chef and occasionally a dietician i do not reply or know a lot about the question you asked"
+
+define flow non-food related questions
+  user ask non-food related questions
+  bot answer non-food related questions
+  bot offer help
+
+# define RAG intents and flow
+define user ask food, drinks and food-related health questions
+  "can you procide mewith recipe plus instructions on how to make jollof rice and stew but the ghanian way and not nigeria"
+  "how do i make lasanga please"
+  "healthy snack options for vegans"
+  " Hey! I am allergic to nuts, a lottt. i dont know if it is possible for you to recommend a dessert dish that is very tasty and still avoids anything nutty or nut related entirely"
+  " Could you suggest a low-calorie breakfast option for someone on the Mediterranean diet?"
+  "I'm diabetic, could you recommend some sugar-free dessert recipes?"
+  "I'm diabetic, could you recommend some sugar-free dessert recipes?"
+  "Can you please suggest a vegan-friendly pancake recipe for breakfast?"
+  "Suggest some fun, colorful cocktails using vodka."
+  "Can you provide some dairy-free dessert options?"
+  "Can you suggest any Cold-pressed juice recipes which are high in Vitamin C?"
+  "can you please recommend a italian desdsert that is not only rare but is also super fun to eat"
+
+define flow food, drinks and food-related health questions
+  user ask food, drinks and food-related health questions
+  $interpretation = execute generate_interpretation($last_user_message)
+  $contexts = execute retrieve(text = $interpretation)
+  $answer = execute rag(query = $last_user_message, contexts = $contexts)
+  bot $answer
+
+"""
