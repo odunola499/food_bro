@@ -29,11 +29,13 @@ def retrieve_from_vector_db(request):
     return model.retrieve(request)
 
 @app.post('/get_rag_response')
-def get_rag_response(text):
-    return model.return_recipe(text)
+async def get_rag_response(text):
+    result = await rag_rails.generate_async(prompt = text)
+    return result
 
 @app.post('/generate_representation')
 def generate_representation(text):
     return model.generate_interpretation(text)
+
 
 
