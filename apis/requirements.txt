@@ -9,3 +9,4 @@ torch
 transformers
 nemoguardrails
 openai
+streamlit
