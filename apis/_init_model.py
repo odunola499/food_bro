@@ -18,9 +18,20 @@ import getpass
 # we could for starters tell the user to b as detailed with their request as they can
 class Models:
     def __init__(self):
+	use_4bit = True
+	bnb_4bit_compute_dtype = "float16"
+	bnb_4bit_quant_type = "nf4"
+	use_nested_quant = False
+
+	bnb_config = BitsAndBytesConfig(
+	    load_in_4bit = use_4bit,
+	    bnb_4bit_quant_type=bnb_4bit_quant_type,
+	    bnb_4bit_compute_dtype=bnb_4bit_compute_dtype,
+	    bnb_4bit_use_double_quant = use_nested_quant,
+	)
         peft_model_id = "odunola/bloomz_reriever_instruct"
         config = PeftConfig.from_pretrained(peft_model_id)
-        rephrase_model = AutoModelForCausalLM.from_pretrained(config.base_model_name_or_path, return_dict=True, load_in_8bit = True, device_map = 'auto')
+        rephrase_model = AutoModelForCausalLM.from_pretrained(config.base_model_name_or_path, return_dict=True, load_in_8bit = True,quantization_config = bnb_config, device_map = 'auto')
         self.tokenizer2 = AutoTokenizer.from_pretrained(config.base_model_name_or_path)
         self.llm2 = PeftModel.from_pretrained(rephrase_model, peft_model_id)
         self.semantic_model = SentenceTransformer('thenlper/gte-large')
