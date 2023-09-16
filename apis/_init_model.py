@@ -51,7 +51,7 @@ class Models:
         return response
     
 
-    def predict(self, text: str) -> str:
+    async def predict(self, text: str) -> str:
         chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[{"role":"system", "content":SIMPLE_PREDICTION_OPENAI_PROMPT_TEMPLATE},{"role": "user", "content": text}])
         response = chat_completion['choices'][0]['message']['content']
         return response
