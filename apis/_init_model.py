@@ -2,16 +2,14 @@ from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     BitsAndBytesConfig)
-import torch
+
 import weaviate
 from sentence_transformers import SentenceTransformer
 from prompts import OPENAI_PROMPT_TEMPLATE,SIMPLE_PREDICTION_OPENAI_PROMPT_TEMPLATE, SIMPLE_PREDICTION_OPENAI_PROMPT_TEMPLATE, RETRIEVER_PROMPT_TEMPLATE
-import os
-import torch
 from peft import PeftModel, PeftConfig
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import openai
-import getpass
+
 # Load the Lora model
 
 

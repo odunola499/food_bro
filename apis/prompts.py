@@ -62,7 +62,6 @@ define user ask food, drinks and food-related health questions
   " Hey! I am allergic to nuts, a lottt. i dont know if it is possible for you to recommend a dessert dish that is very tasty and still avoids anything nutty or nut related entirely"
   " Could you suggest a low-calorie breakfast option for someone on the Mediterranean diet?"
   "I'm diabetic, could you recommend some sugar-free dessert recipes?"
-  "I'm diabetic, could you recommend some sugar-free dessert recipes?"
   "Can you please suggest a vegan-friendly pancake recipe for breakfast?"
   "Suggest some fun, colorful cocktails using vodka."
   "Can you provide some dairy-free dessert options?"
