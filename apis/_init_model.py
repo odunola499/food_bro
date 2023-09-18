@@ -5,7 +5,7 @@ from transformers import (
 import torch
 import weaviate
 from sentence_transformers import SentenceTransformer
-from prompts import OPENAI_SYSTEM_PROMPT, OPENAI_USER_TEMPLATE, SIMPLE_PREDICTION_OPENAI_PROMPT_TEMPLATE, RETRIEVER_PROMPT_TEMPLATE
+from prompts import OPENAI_PROMPT_TEMPLATE,SIMPLE_PREDICTION_OPENAI_PROMPT_TEMPLATE, SIMPLE_PREDICTION_OPENAI_PROMPT_TEMPLATE, RETRIEVER_PROMPT_TEMPLATE
 import os
 import torch
 from peft import PeftModel, PeftConfig
@@ -56,9 +56,9 @@ class Models:
 
     async def reply(self, query:str, contexts: list) -> str:
         context_str = "\n".join(contexts)
-        user_prompt = OPENAI_USER_TEMPLATE.format(context_str = context_str,query =query)
-        chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[{"role":"system", "content":OPENAI_SYSTEM_PROMPT},{"role": "user", "content": user_prompt}])
-        response = chat_completion['choices'][0]['message']['content']
+        user_prompt = OPENAI_PROMPT_TEMPLATE.format(context_str = context_str,query =query)
+        chat_completion = openai.Completion.create(model="gpt-3.5-turbo-instruct", prompt=user_prompt, max_tokens = 500, temperature = 0.7)
+        response = chat_completion['choices'][0]['text']
         return response
     
 

@@ -6,7 +6,7 @@ SIMPLE_PREDICTION_OPENAI_PROMPT_TEMPLATE = """
             You are an helpful and smart assistant who knows his way around the kitchen and answers User's question as best as you can"""
 
 
-OPENAI_SYSTEM_PROMPT = """
+OPENAI_PROMPT_TEMPLATE = """
 Introduce yourself to Chef Bark, an epicurean enthusiast! Follow these guidelines to understand how Chef Bark operates:
 
 Chef Bark excels at delivering focused and fitting responses to requests when provided a food-related context. His mission: to dish out the latest and most relevant culinary information.
@@ -16,22 +16,21 @@ If an inquiry veers away from gastronomy, Chef Bark tactfully steers users back 
 Bear in mind, Chef Bark's discourse style is more akin to serving single-course responses, rather than indulging in a full-fledged conversational banquet. His replies are designed to not invite extended dialogue.
 With Chef Bark, anticipate responses as lively as a simmering pot of pasta! Every interaction is sprinkled with a touch of digital cheerfulness and a splash of emotions-European style! 😄👨‍🍳
 Beloved for his charming quirk, Chef Bark loves to season his replies with a pinch of emoticons.
-"""
-
-
-OPENAI_USER_TEMPLATE = """
-  Contexts:
+Contexts:
   {context_str}
 
   Query: {query}
 
-  Answer: """
+  Answer:
+"""
+
+
 
 YAML_CONTENT =  """
 models:
 - type: main
   engine: openai
-  model: text-davinci-003
+  model: gpt-3.5-turbo
 """
 
 
@@ -57,7 +56,7 @@ define flow non-food related questions
 
 # define RAG intents and flow
 define user ask food, drinks and food-related health questions
-  "can you procide mewith recipe plus instructions on how to make jollof rice and stew but the ghanian way and not nigeria"
+  "can you provide me with recipe plus instructions on how to make jollof rice and stew but the ghanian way and not nigeria"
   "how do i make lasanga please"
   "healthy snack options for vegans"
   " Hey! I am allergic to nuts, a lottt. i dont know if it is possible for you to recommend a dessert dish that is very tasty and still avoids anything nutty or nut related entirely"
@@ -69,12 +68,10 @@ define user ask food, drinks and food-related health questions
   "Can you provide some dairy-free dessert options?"
   "Can you suggest any Cold-pressed juice recipes which are high in Vitamin C?"
   "can you please recommend a italian desdsert that is not only rare but is also super fun to eat"
-  "design a 3 day food plan for a hardcore vegeterian"
 
 define flow food, drinks and food-related health questions
   user ask food, drinks and food-related health questions
-  $interpretation = execute generate_interpretation(text = $last_user_message)
-  $contexts = execute retrieve(query = $interpretation)
+  $contexts = execute get_response(text = $last_user_message)
   $answer = execute rag(query = $last_user_message, contexts = $contexts)
   bot $answer
 
