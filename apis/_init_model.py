@@ -34,7 +34,7 @@ class Models:
         self.llm2 = PeftModel.from_pretrained(rephrase_model, peft_model_id)
         self.semantic_model = SentenceTransformer('thenlper/gte-large')
         self.client = weaviate.Client(
-                url="https://testingserver-8otaf3tj.weaviate.network", #for testing
+                url="https://testing-area-4ps7dhgv.weaviate.network", #for testing
             )
         
 
