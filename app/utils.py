@@ -14,7 +14,7 @@ class Func:
     def __init__(self):
         self.parser_llm = OpenAI(temperature = 0.9, model = 'gpt-3.5-turbo-instruct', max_tokens = -1)
         compressor = LLMChainExtractor.from_llm(self.parser_llm)
-        embedding_function = HuggingFaceEmbeddings(model_name='LargeEmbedder')
+        embedding_function = HuggingFaceEmbeddings(model_name='thenlper/gte-large')
         small_context_index = Chroma(persist_directory="chroma_db", embedding_function=embedding_function, collection_name = 'foodie_small').as_retriever()
         large_context_index = Chroma(persist_directory="chroma_db", embedding_function=embedding_function, collection_name = 'foodie').as_retriever(search_kwargs = {'k':2})
         self.compression_retriever_small = ContextualCompressionRetriever(base_compressor=compressor, base_retriever=small_context_index)

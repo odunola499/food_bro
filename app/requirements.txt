@@ -5,3 +5,4 @@ streamlit==1.27.2
 transformers==4.34.1
 datasets
 chromadb
+tiktoken
