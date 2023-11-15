@@ -13,7 +13,7 @@ func = Func()
 
 st.set_page_config(layout="wide")
 st.title("Food Recommendation Engine")
-pipe = pipeline('text-classification','GuardRail')
+pipe = pipeline('text-classification','odunola/guardrail_distilled')
 
 
 def greet(question):
