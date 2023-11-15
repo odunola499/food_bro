@@ -13,7 +13,7 @@ func = Func()
 
 st.set_page_config(layout="wide")
 st.title("Food Recommendation Engine")
-pipe = pipeline('text-classification','odunola/guardrail', device = 0)
+pipe = pipeline('text-classification','GuardRail')
 
 
 def greet(question):
@@ -23,7 +23,7 @@ def greet(question):
     Question: {question}
     Response:
     """
-    model = OpenAI(temperature = 0.9, model = 'gpt-3.5-turbo-instruct', max_tokens = 128)
+    model = OpenAI(temperature = 0.9, model = 'gpt-3.5-turbo-instruct', max_tokens = 256)
     greeting_prompt = PromptTemplate.from_template(greeting_template)
     chain = LLMChain(llm=model, prompt=greeting_prompt)
     result = chain.run(question = question)
@@ -37,7 +37,7 @@ def unwanted_request(question):
     Question: {question}
     Response: 
     """
-    model = OpenAI(temperature = 0.9, model = 'gpt-3.5-turbo-instruct', max_tokens = 128)
+    model = OpenAI(temperature = 0.9, model = 'gpt-3.5-turbo-instruct', max_tokens = 256)
     prompt = PromptTemplate.from_template(template)
     chain = LLMChain(llm=model, prompt=prompt)
     result = chain.run(question = question)
@@ -59,15 +59,16 @@ def long_question(user_input):
 
 user_input = st.text_input("Enter Prompt")
 if user_input:
-    result = pipe(user_input)
-    if result[0]['label'] == 'LABEL_2':
-        st.write(unwanted_request(user_input))
-    elif result[0]['label'] == 'LABEL_0':
-        short_question(user_input)
-    elif result[0]['label'] == 'LABEL_1':
-        long_question(user_input)
-    elif result[0]['label'] == 'LABEL_3':
-        st.write(greet(user_input))
+    with st.spinner('loading...'):
+        result = pipe(user_input)
+        if result[0]['label'] == 'LABEL_2':
+            st.write(unwanted_request(user_input))
+        elif result[0]['label'] == 'LABEL_0':
+            short_question(user_input)
+        elif result[0]['label'] == 'LABEL_1':
+            long_question(user_input)
+        elif result[0]['label'] == 'LABEL_3':
+            st.write(greet(user_input))
 
 
 

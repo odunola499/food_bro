@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export OPENAI_API_KEY="YOUR OPENAI KEY"
-
 
 pip install -q -r requirements.txt
 

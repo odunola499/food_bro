@@ -28,3 +28,4 @@ if 'chroma_db' not in os.listdir('.'):
 	index_1 = Chroma.from_documents(large_documents, embedding_function, persist_directory="./chroma_db", collection_name = "foodie")
 	index_2 = Chroma.from_documents(small_documents, embedding_function, persist_directory="./chroma_db", collection_name = 'foodie_small')
 
+
